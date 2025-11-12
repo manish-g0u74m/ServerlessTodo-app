@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; background:#f6f8fa; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; margin:0; padding:40px; }
+    .container { background:white; padding:25px 30px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.1); width:400px; }
+    h1 { text-align:center; color:#333; margin-bottom:20px; }
+    .input-row { display:flex; gap:10px; }
+    input { flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px; }
+    button { background-color:#0078d7; color:white; border:none; border-radius:6px; padding:10px 15px; cursor:pointer; }
+    button:hover { background-color:#005fa3; }
+    ul { list-style:none; padding:0; margin-top:20px; }
+    li { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee; }
+    li.completed span { text-decoration:line-through; color:#999; }
+    .btn-delete { background:#dc3545; border:none; color:white; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:13px; }
+    .btn-delete:hover { background:#a71d2a; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Todo List</h1>
+    <div class="input-row">
+      <input id="todoInput" type="text" placeholder="Add a new task" />
+      <button onclick="addTodo()">Add</button>
+    </div>
+    <ul id="todoList"></ul>
+  </div>
+
+  <script>
+    const API_URL = "https://<api-id>.execute-api.ap-south-1.amazonaws.com/todos";
+
+    async function loadTodos() {
+      const res = await fetch(API_URL);
+      const todos = await res.json();
+      const list = document.getElementById("todoList");
+      list.innerHTML = "";
+      todos.forEach(todo => {
+        const li = document.createElement("li");
+        li.className = todo.completed ? "completed" : "";
+        const span = document.createElement("span");
+        span.textContent = todo.title;
+        span.onclick = () => toggle(todo);
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.className = "btn-delete";
+        del.onclick = () => delTodo(todo.id);
+        li.appendChild(span);
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    async function addTodo() {
+      const input = document.getElementById("todoInput");
+      const title = input.value.trim();
+      if (!title) return alert("Please enter a task");
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title })
+      });
+      input.value = "";
+      loadTodos();
+    }
+
+    async function toggle(todo) {
+      await fetch(API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: todo.id, completed: !todo.completed })
+      });
+      loadTodos();
+    }
+
+    async function delTodo(id) {
+      await fetch(API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      loadTodos();
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
