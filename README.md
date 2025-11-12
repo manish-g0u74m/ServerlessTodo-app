@@ -328,22 +328,10 @@ Replace `API_URL` with your real API endpoint.
 
 ---
 
-## 🔒 Future Improvements
-
-* Add authentication (Cognito or IAM)
-* Add pagination and filtering in DynamoDB
-* Add CloudFront distribution with HTTPS
-* Add CI/CD using AWS CodePipeline or GitHub Actions
-
----
-
 ## 👨‍💻 Author
 
 **Manish Sharma**
 *AWS & DevOps Enthusiast*
 📧 [manish.sharma.devops@gmail.com](mailto:manish.sharma.devops@gmail.com)
 
-
 ---
-
-If you'd like, I can now add badges (AWS, Python, HTML), a small architecture SVG/diagram, or a one-click Deploy-to-AWS guide — tell me which items to add and I'll update `README.md` accordingly.
